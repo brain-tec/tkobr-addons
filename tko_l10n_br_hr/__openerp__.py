@@ -60,7 +60,7 @@ Entre outros adiciona:\n
     'demo': [],
     'update': [],
     'test': [],  # YAML files with tests
-    'installable': True,
+    'installable': False,
     'application': False,
     # If it's True, the modules will be auto-installed when all dependencies
     # are installed

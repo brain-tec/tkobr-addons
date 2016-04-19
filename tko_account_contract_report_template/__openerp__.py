@@ -51,7 +51,7 @@
 
     ],
     'demo_xml': [],
-    'installable': True,
+    'installable': False,
     'application': False,
     'certificate': '',
 }

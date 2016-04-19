@@ -52,6 +52,6 @@ Capture partner pictures with an attached web cam.
         'webcam_data.xml',
         'webcam_view.xml',
     ],
-    'installable': True,
+    'installable': False,
     'active': False,
 }

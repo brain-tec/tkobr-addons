@@ -2,11 +2,6 @@
 <openerp>
     <data noupdate="1">
 
-        <record id="partner_sequence_type" model="ir.sequence.type">
-            <field name="name">Partner Sequence</field>
-            <field name="code">res.partner</field>
-        </record>
-
         <record id="partner_sequence" model="ir.sequence">
             <field name="name">Partner Sequence</field>
             <field name="code">res.partner</field>

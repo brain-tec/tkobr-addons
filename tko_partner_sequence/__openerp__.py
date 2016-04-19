@@ -24,7 +24,7 @@
 
 {
     'name': 'Partner Sequence Unique Number',
-    'version': '0.001',
+    'version': '9.0.1.0.0',
     'category': 'Localisation',
     'sequence': 2,
     'complexity': 'normal',

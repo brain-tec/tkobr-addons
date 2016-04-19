@@ -46,7 +46,7 @@ Merge into one single partner's tab the multiple phones and emails tabs.\n\n
     'demo': [],
     'update': [],
     'test': [],  # YAML files with tests
-    'installable': True,
+    'installable': False,
     'application': False,
     # If it's True, the module will be auto-installed when all dependencies
     # are installed

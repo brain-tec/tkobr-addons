@@ -18,9 +18,9 @@ msgstr ""
 #. module: tko_partner_sequence
 #: model:ir.model.fields,field_description:tko_partner_sequence.field_res_partner_partner_sequence
 msgid "Number"
-msgstr "Número"
+msgstr "Kundennummer"
 
 #. module: tko_partner_sequence
-#: model:ir.model,name:tko_partner_sequence.model_res_partner
+#: model:ir.model,name:.model_res_partner
 msgid "Partner"
-msgstr "Parceiro"
+msgstr "Partner"

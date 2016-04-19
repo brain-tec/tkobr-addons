@@ -6,7 +6,7 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form" />
             <field name="arch" type="xml">
-                <xpath expr="//div[@name='buttons']" position="after">
+                <xpath expr="//div[descendant-or-self::field[@name='parent_id']]" position="after">
                     <group>
                         <field name="partner_sequence" readonly="1" />
                     </group>
