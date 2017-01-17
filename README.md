@@ -7,7 +7,7 @@ Available addons
 ----------------
 addon | version | summary
 --- | --- | ---
-[tko_partner_sequence](tko_partner_sequence/) | 9.0.1.0.0 | Add unique partner sequence
+[tko_partner_sequence](tko_partner_sequence/) | 10.0.1.0 | Add unique partner sequence
 
 
 Unported addons

@@ -22,32 +22,17 @@
 #
 ##############################################################################
 
-{
-    'name': 'Partner Sequence Unique Number',
-    'version': '9.0.1.0.0',
-    'category': 'Localisation',
-    'sequence': 2,
-    'complexity': 'normal',
-    'description': '''This module adds an automatic sequencial number to every partner.''',
-    'author': 'ThinkOpen Solutions Brasil',
-    'license': 'AGPL-3',
-    'website': 'http://www.tkobr.com',
-    'depends': [
-                'base',
-    ],
+from odoo import models, fields, api
 
-    'data': [
-        'partner_sequence.xml',
-        'res_partner_view.xml',
-    ],
-    'init': [],
-    'demo': [],
-    'update': [],
-    'test': [],  # YAML files with tests
-    'installable': True,
-    'application': False,
-    # If it's True, the modules will be auto-installed when all dependencies
-    # are installed
-    'auto_install': False,
-    'certificate': '',
-}
+
+class PartnerExt(models.Model):
+    _inherit = 'res.partner'
+
+    partner_sequence = fields.Char('Number')
+
+    @api.model
+    def create(self, vals):
+        code = self.env['ir.sequence'].next_by_code('res.partner')
+        vals['partner_sequence'] = code
+
+        return super(PartnerExt, self).create(vals)

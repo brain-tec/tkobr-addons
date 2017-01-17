@@ -22,17 +22,32 @@
 #
 ##############################################################################
 
-from openerp.osv import osv, fields
+{
+    'name': 'Partner Sequence Unique Number',
+    'version': '10.0.1.0',
+    'category': 'Localisation',
+    'sequence': 2,
+    'complexity': 'normal',
+    'description': '''This module adds an automatic sequencial number to every partner.''',
+    'author': 'ThinkOpen Solutions Brasil',
+    'license': 'AGPL-3',
+    'website': 'http://www.tkobr.com',
+    'depends': [
+        'base',
+    ],
 
-
-class res_partner(osv.osv):
-    _inherit = 'res.partner'
-
-    _columns = {
-        'partner_sequence': fields.char('Number'),
-    }
-
-    def create(self, cr, uid, vals, context=None):
-        code = self.pool.get('ir.sequence').get(cr, uid, 'res.partner')
-        vals['partner_sequence'] = code
-        return super(res_partner, self).create(cr, uid, vals, context=context)
+    'data': [
+        'views/partner_sequence.xml',
+        'views/res_partner_view.xml',
+    ],
+    'init': [],
+    'demo': [],
+    'update': [],
+    'test': [],  # YAML files with tests
+    'installable': True,
+    'application': False,
+    # If it's True, the modules will be auto-installed when all dependencies
+    # are installed
+    'auto_install': False,
+    'certificate': '',
+}
