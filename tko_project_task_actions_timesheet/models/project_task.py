@@ -23,6 +23,7 @@
 ##############################################################################
 
 from odoo import models, api, fields, _
+from openerp.exceptions import ValidationError
 
 class Project(models.Model):
     _inherit = "project.project"
@@ -105,20 +106,26 @@ class ProjectTaskActionsLine(models.Model):
 
     @api.multi
     def open_wizard(self):
-        if self.action_id.is_wizard_open:
-            return {
-                'name': _('Timesheet Time'),
-                'view_type': 'form',
-                'view_mode': 'form',
-                'res_model': 'timesheet.time',
-                'view_id': self.env.ref('tko_project_task_actions_timesheet.timesheet_time_view').id,
-                'type': 'ir.actions.act_window',
-                'context': self._context,
-                'target': 'new'
-            }
+        if self.user_id.id == self._uid:
+            if self.action_id.is_wizard_open:
+                context = self._context.copy()
+                context.update({'default_description':self.action_id.name})
+                return {
+                    'name': _('Timesheet Time'),
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'timesheet.time',
+                    'view_id': self.env.ref('tko_project_task_actions_timesheet.timesheet_time_view').id,
+                    'type': 'ir.actions.act_window',
+                    'context': context,
+                    'target': 'new'
+                }
+        else:
+            raise ValidationError("This user have no rights to input a time. Only " + self.user_id.name  +" can input a time",)
 
-    def set_done(self):
-        super(ProjectTaskActionsLine, self).set_done()
+    def done(self):
+        context = self._context.copy()
+        context.update({'default_description':self.action_id.name})
         if self.action_id.is_wizard_open:
             return {
                 'name': _('Timesheet Time'),
@@ -127,7 +134,7 @@ class ProjectTaskActionsLine(models.Model):
                 'res_model': 'timesheet.time',
                 'view_id': self.env.ref('tko_project_task_actions_timesheet.timesheet_time_view').id,
                 'type': 'ir.actions.act_window',
-                'context': self._context,
+                'context': context,
                 'target': 'new'
             }
 
@@ -149,6 +156,11 @@ class Timesheet_time(models.Model):
     _name = 'timesheet.time'
 
     time = fields.Float("Time")
+    description = fields.Char("Description",required=True)
+    timesheet_id = fields.Many2one('project.task', string='Task')
+    worklog_ids = fields.One2many(related="timesheet_id.timesheet_ids",
+                            comodel_name="account.analytic.line", 
+                            string='Worklogs')
 
     @api.multi
     def add_time(self):
@@ -156,6 +168,8 @@ class Timesheet_time(models.Model):
             action_line = self.env['project.task.action.line'].search([('id','=',self._context.get('active_id',False))])
             timesheet_obj = self.env['account.analytic.line']
             if action_line and action_line.task_id and action_line.task_id.project_id:
+                if self._context.get('button_set_done',False):
+                    action_line.set_done()
                 timesheet_obj.create({'name':action_line.action_id and action_line.action_id.name or '',
                                 'unit_amount':self.time,'account_id':action_line.task_id.project_id.id,
                                 'task_id':action_line.task_id.id,
