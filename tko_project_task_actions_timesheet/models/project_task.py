@@ -121,7 +121,7 @@ class ProjectTaskActionsLine(models.Model):
                     'target': 'new'
                 }
         else:
-            raise ValidationError("This user have no rights to input a time. Only " + self.user_id.name  +" can input a time",)
+            raise ValidationError("This user have no rights to input a time. Only " + self.user_id.name  +" can input a time")
 
     def done(self):
         context = self._context.copy()
