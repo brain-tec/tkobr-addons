@@ -43,7 +43,6 @@
                 </xpath>
                  <xpath expr="//field[@name='action_line_ids']/tree/button[@name='set_done']" position='attributes'>
                     <attribute name="context">{'button_set_done':True,'default_timesheet_id':task_id}</attribute>
-                    <attribute name="name">done</attribute>
                 </xpath>
                 <xpath expr="//field[@name='action_line_ids']/tree/field[@name='state']" position='after'>
                     <button name="open_wizard" icon="fa fa-clock-o" type="object" attrs="{'invisible':[('is_open','=', False)]}" context="{'default_timesheet_id':task_id}"/>

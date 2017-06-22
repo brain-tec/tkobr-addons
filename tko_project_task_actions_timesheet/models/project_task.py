@@ -123,20 +123,22 @@ class ProjectTaskActionsLine(models.Model):
         else:
             raise ValidationError("This user have no rights to input a time. Only " + self.user_id.name  +" can input a time")
 
-    def done(self):
+    def set_done(self):
+        super(ProjectTaskActionsLine, self).set_done()
         context = self._context.copy()
         context.update({'default_description':self.action_id.name})
         if self.action_id.is_wizard_open:
+            self.write({'state': 'i'})
             return {
-                'name': _('Timesheet Time'),
-                'view_type': 'form',
-                'view_mode': 'form',
-                'res_model': 'timesheet.time',
-                'view_id': self.env.ref('tko_project_task_actions_timesheet.timesheet_time_view').id,
-                'type': 'ir.actions.act_window',
-                'context': context,
-                'target': 'new'
-            }
+                    'name': _('Timesheet Time'),
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'timesheet.time',
+                    'view_id': self.env.ref('tko_project_task_actions_timesheet.timesheet_time_view').id,
+                    'type': 'ir.actions.act_window',
+                    'context': context,
+                    'target': 'new'
+             }
 
     def set_cancel(self):
         super(ProjectTaskActionsLine, self).set_cancel()
@@ -169,7 +171,7 @@ class Timesheet_time(models.Model):
             timesheet_obj = self.env['account.analytic.line']
             if action_line and action_line.task_id and action_line.task_id.project_id:
                 if self._context.get('button_set_done',False):
-                    action_line.set_done()
+                    action_line.write({'state': 'd'})
                 timesheet_obj.create({'name':action_line.action_id and action_line.action_id.name or '',
                                 'unit_amount':self.time,'account_id':action_line.task_id.project_id.id,
                                 'task_id':action_line.task_id.id,
