@@ -36,6 +36,11 @@
         'tko_account_moves_in_draft',
     ],
     'data': [
+        'security/ir.model.access.csv',
+        'views/account_invoice_view.xml',
+        'views/account_expense_view.xml',
+        'views/ir_attachment_view.xml',
+        'views/account_analytic_view.xml',
     ],
     'init': [],
     'demo': [],
