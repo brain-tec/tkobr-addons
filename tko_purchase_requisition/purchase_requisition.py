@@ -38,7 +38,7 @@ class PurchaseRequisition(models.Model):
         template_id = ir_model_data.get_object_reference('purchase', 'email_template_edi_purchase')[1]
         if template_id:
             for rfq in self.purchase_ids:
-                if rfq.partner_id.email:
+                if rfq.partner_id.email and rfq.state == 'draft':
                     template_obj = self.env['email.template']
                     values = template_obj.generate_email(template_id, rfq.id)
                     values['email_to'] = rfq.partner_id.email
@@ -60,13 +60,5 @@ class PurchaseRequisition(models.Model):
                     # send mail
                     mail.send()
                     # change status of RFQ
-                    # rfq.state = 'sent'
-                    self.signal_workflow(cr, uid, ids, 'send_rfq')
+                    rfq.signal_workflow('send_rfq')
         return True
-
-    # change status of RFQ
-    #@api.multi
-    #def send_rfq_signal(self, cr, uid, ids, context=None):
-    #    context = context or {}
-    #    if context.get('send_rfq', True):
-    #        self.pool.get('purchase.order').signal_workflow(cr, uid, [context['default_res_id']], 'send_rfq')
