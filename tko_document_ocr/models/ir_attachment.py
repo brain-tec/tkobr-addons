@@ -243,16 +243,19 @@ class IrAttachment(models.Model):
         if synchr:
             _logger.info('OCR PDF "%s"...', self.name)
             time_start = time.time()
-            stdout, stderr = subprocess.Popen(
-                ['pdftotext', '-layout', '-nopgbrk', '-', '-'],
-                stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE).communicate(bin_data)
-            if stderr:
-                _logger.warning('Error converting PDF to text: %s', stderr)
-            buf = stdout
-            # OCR PDF Images
             tmpdir = tempfile.mkdtemp()
+            buf = ''
             try:
+                stdout, stderr = subprocess.Popen(
+                    ['pdftotext', '-layout', '-nopgbrk', '-', '-'],
+                    stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE).communicate(bin_data)
+                if stderr:
+                    _logger.warning('Error converting PDF to text: %s', stderr)
+                buf = stdout
+
+                # OCR PDF Images
+
                 stdout, stderr = subprocess.Popen(
                     ['pdfimages', '-p', '-', tmpdir + '/ocr'],
                     stdin=subprocess.PIPE, stdout=subprocess.PIPE,
@@ -280,8 +283,8 @@ class IrAttachment(models.Model):
                     t.join()
                 for text in sorted(ocr_images_text):
                     buf = '%s\n%s' % (buf, ocr_images_text[text])
-            except:
-                pass
+            except Exception, err:
+                _logger.warning('Error converting PDF to text: %s', err[0])
             shutil.rmtree(tmpdir)
         else:
             buf = _MARKER_PHRASE
