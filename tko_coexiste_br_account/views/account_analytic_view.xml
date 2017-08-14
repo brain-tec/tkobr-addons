@@ -6,11 +6,13 @@
         <field name="arch" type="xml">
             <field name="currency_id" position="after">
                 <field name="journal_id"/>
+                <field name="line_total"/>
             </field>
             <xpath expr="//field[@name='date']" position="after">
                 <field name="invoice_id"/>
                 <field name="date_due"/>
                 <field name="state"/>
+                <button name="get_history" type="object" string="Get History"/>
             </xpath>
             <!-- payment_line -->
             <xpath expr="//sheet" position="inside">
