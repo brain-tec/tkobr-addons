@@ -35,6 +35,40 @@ class AccountExpenseType(models.Model):
                                     required=True, default='b', string='InvoiceType')
 
 
+class AccountMove(models.Model):
+    _inherit = 'account.move'
+
+    @api.model
+    def create(self, vals):
+        res=super(AccountMove, self).create(vals) 
+        move_line_ids = self.env['account.move.line'].search([('move_id','=',res.id)])
+        partner = res.partner_id
+        account_ids = []
+        account_ids.append(partner.property_account_receivable_id.id)
+        account_ids.append(partner.property_account_payable_id.id)
+        partner_line_id = self.env['account.move.line'].search([('move_id','=',res.id),('account_id','in',account_ids)])
+        date_maturity = partner_line_id.date_maturity
+        for line in move_line_ids:
+            line.update({'date_maturity': date_maturity})
+        return res
+
+
+class AccountMoveLine(models.Model):
+    _inherit = 'account.move.line'
+
+    @api.onchange('date_maturity')
+    def onchange_date_maturity(self):
+        partner = self.partner_id
+        move_line_ids = self.search([('move_id','=',self.move_id.id)])
+        account_ids = []
+        account_ids.append(partner.property_account_receivable_id.id)
+        account_ids.append(partner.property_account_payable_id.id)
+        if self.account_id.id in account_ids:
+            date_maturity = self.date_maturity
+            for line in move_line_ids:
+                line.write({'date_maturity': date_maturity})
+
+
 class AccountPayment(models.Model):
     _inherit = 'account.payment'
 
@@ -51,11 +85,40 @@ class AccountPayment(models.Model):
                             move_line.date_maturity = invoice.move_id.date
         return res
 
+    @api.model
+    def create(self, vals):
+        res = super(AccountPayment, self).create(vals)
+        if vals.get('communication'):
+            invoice = self.env['account.invoice'].search([('number','=', vals.get('communication'))])
+            if invoice:
+                invoice_payment_vals = {
+                    'payment_date':vals.get('payment_date'),
+                    'amount':vals.get('amount'),
+                    'name':res,
+                    'invoice_id':invoice.id
+                }
+                self.env['invoice.payment.info'].create(invoice_payment_vals)
+        return res
+
+
+class InvoicePaymentInfo(models.Model):
+    _name = 'invoice.payment.info'
+    _description = 'Invoice Payment Details'
+
+    payment_date = fields.Date(string='Payment Date', copy=False)
+    name = fields.Char('Name', copy=False)
+    invoice_id = fields.Many2one('account.invoice', string='Invoice ID', copy=False)
+    currency_id = fields.Many2one('res.currency', related='invoice_id.currency_id', readonly=True,
+        help='Utility field to express amount currency')
+    amount = fields.Monetary(string='Amount', copy=False, required=True, currency_field='currency_id')
+
 
 class AccountInvoice(models.Model):
     _inherit = "account.invoice"
 
     expense_type_id = fields.Many2one('account.expense.type', string=u'Expense Type')
+    payment_line = fields.One2many('invoice.payment.info', 'invoice_id', string="Invoice Payment Lines")
+    payment_date = fields.Date(related='payment_line.payment_date', string='Payment Date')
 
     # set move date
     @api.multi
@@ -79,6 +142,28 @@ class AccountInvoice(models.Model):
         if self.type in ('out_invoice', 'out_refund'):
             self.move_id.write({'state': 'draft'})
         return result
+
+    @api.multi
+    def update_history(self):
+        move_line_obj = self.env['account.move.line']
+        inv_obj = self.env['account.invoice']
+        invoices = inv_obj.search([])
+        # invoices = [x.invoice_id for x in inv_lines if x.invoice_id.state == 'paid']
+        invoices = set(invoices)
+        for invoice in invoices:
+            lines = move_line_obj.search([('ref','=', invoice.number)])
+            for line in lines:
+                if line.account_id.user_type_id.type == 'liquidity':
+                    invoice_payment_vals = {
+                        'payment_date':line.date,
+                        'amount':line.debit == 0 and line.credit or line.debit,
+                        'name':line,
+                        'invoice_id':invoice.id,
+                        'currency_id':line.currency_id.id
+                    }
+                    self.env['invoice.payment.info'].create(invoice_payment_vals)
+        return True
+
 
 class AccountInvoiceLine(models.Model):
     _inherit = "account.invoice.line"
