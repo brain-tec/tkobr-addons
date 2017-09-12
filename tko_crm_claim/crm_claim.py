@@ -193,7 +193,7 @@ class crm_claim(models.Model):
     @api.depends('categ_id')
     @api.one
     def _get_assinged_supervisor(self):
-         if self.type_id.assigned_id:
+        if self.type_id.assigned_id:
             assigned_id = self.type_id and self.type_id.assigned_id and self.type_id.assigned_id.id or False
             if not assigned_id:
                 assigned_id = self.categ_id and self.categ_id.assigned_id and self.categ_id.assigned_id.id or assigned_id
