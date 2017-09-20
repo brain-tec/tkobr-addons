@@ -95,6 +95,7 @@ class AccountAnalyticLine(models.Model):
     state = fields.Selection(related='invoice_id.state', string='State')
     date_due =fields.Date(related='invoice_id.date_due', string='Due Date')
     payment_line = fields.One2many('account.analytic.payment', 'analytic_line_id', string="Analytic Payment Lines")
+    payment_date = fields.Date(related='payment_line.payment_date', string='Payment Date')
     line_total = fields.Float('Total', compute='_total_compute', store=True)
 
     @api.model
