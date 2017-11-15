@@ -24,6 +24,7 @@ class AccountAnalyticLine(models.Model):
                 line_total = line_total+line.amount
             analytic_line.line_total = line_total
 
+
     partner_id = fields.Many2one('res.partner', related='move_id.partner_id', string='Partner', store=True)
     company_id = fields.Many2one(related='move_id.company_id', string='Company', store=True, readonly=False)
     journal_id = fields.Many2one(related='move_id.journal_id', string='Journal', store=True, readonly=False)
@@ -32,7 +33,7 @@ class AccountAnalyticLine(models.Model):
     date_due =fields.Date(related='invoice_id.date_due', string='Due Date')
     payment_line = fields.One2many(related='invoice_id.payment_line', string="Analytic Payment Lines")
     payment_move_line_ids = fields.Many2many(related='invoice_id.payment_move_line_ids', string="Analytic Payment Lines")
-    line_total = fields.Float('Total', compute='_total_compute', store=True)
+    line_total = fields.Float('Total', compute=_total_compute, store=True)
 
     @api.model
     def create(self, vals):
