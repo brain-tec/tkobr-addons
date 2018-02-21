@@ -59,7 +59,7 @@ class AccountMoveLine(models.Model):
     def create(self, vals):
         if vals.get('invoice_id'):
             invoice = self.env['account.invoice'].search([('id','=',vals.get('invoice_id'))])
-            vals.update({'date_maturity':invoice.date_due})
+            vals.update({'date_maturity':invoice.date_due,'expense_type_id': invoice.expense_type_id.id})
         return super(AccountMoveLine, self).create(vals)
 
     @api.multi
@@ -114,6 +114,20 @@ class InvoicePaymentInfo(models.Model):
 
 class AccountInvoice(models.Model):
     _inherit = "account.invoice"
+
+    @api.multi
+    def invoice_validate(self):
+        for invoice in self:
+            # refuse to validate a vendor bill/refund if there already exists one with the same reference for the same partner,
+            # because it's probably a double encoding of the same bill/refund
+            if invoice.type in ('in_invoice', 'in_refund') and invoice.vendor_number:
+                if self.search([('type', '=', invoice.type), ('vendor_number', '=', invoice.vendor_number),
+                                ('company_id', '=', invoice.company_id.id),
+                                ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
+                                ('id', '!=', invoice.id)]):
+                    raise UserError(_(
+                        u"Duplicated Número NF Entrada detected. You probably encoded twice the same vendor bill/refund."))
+        return self.write({'state': 'open'})
 
     @api.model
     def _default_journal_tko(self):
