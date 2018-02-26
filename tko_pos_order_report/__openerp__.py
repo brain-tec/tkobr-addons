@@ -15,7 +15,7 @@
     'images': ['images/oerp61.jpeg',
                ],
     'depends': [
-        'point_of_sale'
+        'point_of_sale',
         'tko_point_of_sale_discount_on_order',
         'tko_point_of_sale_order_type',
     ],

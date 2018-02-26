@@ -1,8 +1,8 @@
 <openerp>
     <data>
-        <record id="view_report_pos_order_search" model="ir.ui.view">
-            <field name="name">report.pos.order.search</field>
-            <field name="model">report.pos.order</field>
+        <record id="view_report_pos_order_tko_search" model="ir.ui.view">
+            <field name="name">report.pos.order.tko.search</field>
+            <field name="model">report.pos.order.tko</field>
             <field name="inherit_id" ref="point_of_sale.view_report_pos_order_search"/>
             <field name="arch" type="xml">
                 <field name="user_id" position="after">
