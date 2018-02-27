@@ -2,7 +2,8 @@
 <openerp>
     <data>
         <record id="view_report_pos_order_graph" model="ir.ui.view">
-            <field name="name">report.pos.order.tko.graph</field>
+            <field name="name">report.pos.order.graph</field>
+            <!--<field name="name">report.pos.order.tko.graph</field>-->
             <field name="model">report.pos.order.tko</field>
             <field name="arch" type="xml">
                 <graph string="Point of Sale Analysis" type="pivot">
@@ -12,8 +13,10 @@
             </field>
         </record>
 
-        <record id="view_report_pos_order_tko" model="ir.ui.view">
-            <field name="name">report.pos.order.tko.search</field>
+        <record id="view_report_pos_order" model="ir.ui.view">
+        <!--<record id="view_report_pos_order_tko" model="ir.ui.view">-->
+            <field name="name">report.pos.order.search</field>
+            <!--<field name="name">report.pos.order.tko.search</field>-->
             <field name="model">report.pos.order.tko</field>
             <field name="arch" type="xml">
                 <search string="Point of Sale Analysis">
@@ -45,7 +48,8 @@
             <field name="res_model">report.pos.order.tko</field>
             <field name="view_type">form</field>
             <field name="view_mode">graph</field>
-            <field name="search_view_id" ref="view_report_pos_order_tko"/>
+            <field name="search_view_id" ref="view_report_pos_order"/>
+            <!--<field name="search_view_id" ref="view_report_pos_order_tko"/>-->
             <field name="context">{'group_by_no_leaf':1,'group_by':[]}</field>
         </record>
 

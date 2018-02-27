@@ -47,15 +47,16 @@ class report_pos_order_tko(osv.osv):
         'average_price': fields.float('Average Price', readonly=True, group_operator="avg"),
         'order_type': fields.selection([('v', 'Venda'), ('t', 'Troca'), ('c', 'Cancelamento')],string=u'Order Type', readonly=True),
         'session_id': fields.many2one('pos.session', 'Session',select=1,domain="[('state', '=', 'opened')]",states={'draft' : [('readonly', False)]},readonly=True),
-        'account_move': fields.many2one('account.move', 'Journal Entry', readonly=True, copy=False),
-        'discount_card_id': fields.many2one('pos.discount.cards', 'Discount Cards'),
-        'name': fields.char('Discount Card'),
-        'type': fields.selection([('p', 'Percentage'), ('fi', 'Fixed')], string='Type'),
-        'value': fields.char('Card Value'),
-        'discount_on_order': fields.float('Discount on Order'),
-        'move_id': fields.many2one('account.move', 'Account Move', ondelete="cascade", help="The move of this entry line.", select=2, required=True, auto_join=True),
-        'bank_statement_id': fields.many2one('account.bank.statement', 'Statement', select=True, required=True, ondelete='restrict'),
-        'ref': fields.char('Reference'),
+        # 'account_move': fields.many2one('account.move', 'Journal Entry', readonly=True, copy=False),
+        # 'discount_card_id': fields.many2one('pos.discount.cards', 'Discount Cards'),
+        'discount_card_name': fields.char('Discount Card'),
+        # 'discount_card_type': fields.selection([('p', 'Percentage'), ('fi', 'Fixed')], string='Type'),
+        # 'discount_card_value': fields.char('Card Value'),
+        # 'discount_on_order': fields.float('Discount on Order'),
+        # 'move_id': fields.many2one('account.move', 'Account Move', ondelete="cascade", help="The move of this entry line.", select=2, required=True, auto_join=True),
+        # 'name': fields.char('Name', required=True),
+        # 'bank_statement_id': fields.many2one('account.bank.statement', 'Statement', select=True, required=True, ondelete='restrict'),
+        # 'ref': fields.char('Reference'),
 
     }
     _order = 'date desc'
@@ -84,31 +85,19 @@ class report_pos_order_tko(osv.osv):
                     pt.categ_id as product_categ_id,
                     l.order_id as order_id,
                     s.order_type as order_type,
-                    al.statement_id as bank_statement_id,
-                    al.ref as bank_statement_reference,
                     s.session_id as session_id,
-                    m.journal_id as journal_id,
-                    s.account_move as account_move,
-                    d.name as discount_card,
-                    d.type as discount_type,
-                    d.value as discount_value,
-                    s.discount_on_order as discount_on_order,
-                    m.move_id as account_move_line_id
+                    s.discount_card_name as discount_card_name
                     
                 from pos_order_line as l
                     left join pos_order s on (s.id=l.order_id)
                     left join product_product p on (p.id=l.product_id)
                     left join product_template pt on (pt.id=p.product_tmpl_id)
                     left join product_uom u on (u.id=pt.uom_id)
-                    left join pos_discount_cards d on (d.id=s.discount_card_id)
-                    left join account_bank_statement_line al on (al.pos_statement_id=s.id)
-                    left join account_move_line m on (m.statement_id=al.statement_id)
                     
                 group by
                     s.date_order, s.partner_id,s.state, pt.categ_id,
                     s.user_id,s.location_id,s.company_id,s.sale_journal,l.product_id,s.create_date,l.order_id,s.no_lines,s.discount_on_order,l.line_subototal,
-                    s.order_type,al.statement_id,s.session_id,m.journal_id,s.account_move,d.name,d.type,
-                    m.move_id,al.ref,d.value
+                    s.order_type,s.session_id,s.discount_card_name
                 having
                     sum(l.qty * u.factor) != 0)""")
 
