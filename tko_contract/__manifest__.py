@@ -4,8 +4,8 @@
 #    OpenERP, Open Source Management Solution
 #    Copyright (C) 2004-2010 Tiny SPRL (<http://tiny.be>).
 #
-#    ThinkOpen Solutions Brasil
-#    Copyright (C) Thinkopen Solutions <http://www.tkobr.com>.
+#    Thinkopen Brasil
+#    Copyright (C) Thinkopen Solutions Brasil (<http://www.tkobr.com>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -22,11 +22,29 @@
 #
 ##############################################################################
 
-from odoo import models, fields, api, _
-
-
-class ResPartner(models.Model):
-    _inherit = 'res.partner'
-
-    is_student = fields.Boolean(u'É um Estudante', required=False)
-    contact = fields.Boolean(u'É um Contato')
+{
+    'name': 'tko_contract',
+    'version': '0.001',
+    'category': 'Customizations',
+    'sequence': 119,
+    'complexity': 'normal',
+    'description': '''Add sequence in Contracts''',
+    'author': 'ThinkOpen Solutions Brasil',
+    'website': 'http://www.tkobr.com',
+    'depends': [
+        'contract',
+    ],
+    'data': [
+        'data/sequence_data.xml',
+        'views/account_invoice.xml',
+    ],
+    'init': [],
+    'demo': [],
+    'update': [],
+    'test': [],  # YAML files with tests
+    'installable': True,
+    'application': False,
+    # If it's True, the modules will be auto-installed when all dependencies are installed
+    'auto_install': False,
+    'certificate': '',
+}
