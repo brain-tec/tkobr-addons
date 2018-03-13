@@ -6,6 +6,7 @@ from odoo import models, fields, api, _
 class AccountAnalyticAccount(models.Model):
     _inherit = 'account.analytic.account'
 
+
     @api.model
     def create(self, vals):
         sequence = self.env['ir.sequence'].next_by_code(
