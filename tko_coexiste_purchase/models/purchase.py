@@ -22,42 +22,24 @@
 #
 ##############################################################################
 
-{
-    'name': 'tko_coexiste_br_account',
-    'version': '0.001',
-    'category': 'Customizations',
-    'sequence': 150,
-    'description': '''  tko_coexiste_br_account''',
-    'author': 'ThinkOpen Solutions Brasil',
-    'website': 'http://www.tkobr.com',
-    'depends': [
-        'base',
-        'account',
-        'br_account',
-        'br_account_payment',
-        'contract',
-        'tko_account_parent_analytic',
-        'tko_account_moves_in_draft',
-        'tko_contract',
-        'account_cost_center',
-    ],
-    'data': [
-        'security/ir.model.access.csv',
-        'views/account_invoice_view.xml',
-        'views/account_expense_view.xml',
-        'views/ir_attachment_view.xml',
-        'views/account_analytic_view.xml',
-        'views/account_view.xml',
-        'views/account.xml',
-        'views/reconcile_button_view.xml',
-        'views/contract_view.xml',
+from odoo import models, fields, api, _
 
-    ],
-    'init': [],
-    'demo': [],
-    'update': [],
-    'installable': True,
-    'application': False,
-    'auto_install': False,
-    'certificate': '',
-}
+
+class PurchaseOrder(models.Model):
+    _inherit = 'purchase.order'
+
+    @api.multi
+    def _prepare_invoice(self):
+        result = super(PurchaseOrder, self)._prepare_invoice()
+        result.update({'reference_coexiste': self.partner_ref})
+        return result
+
+    @api.multi
+    def action_view_invoice(self):
+        result = super(PurchaseOrder, self).action_view_invoice()
+        if not self.invoice_ids:
+            result['context'].update({'default_fiscal_position_id': self.fiscal_position_id.id,
+                                      'default_reference_coexiste': self.partner_ref,
+                                      'default_payment_term_id': self.payment_term_id.id,
+                                      })
+        return result

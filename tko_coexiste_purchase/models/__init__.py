@@ -21,43 +21,4 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-
-{
-    'name': 'tko_coexiste_br_account',
-    'version': '0.001',
-    'category': 'Customizations',
-    'sequence': 150,
-    'description': '''  tko_coexiste_br_account''',
-    'author': 'ThinkOpen Solutions Brasil',
-    'website': 'http://www.tkobr.com',
-    'depends': [
-        'base',
-        'account',
-        'br_account',
-        'br_account_payment',
-        'contract',
-        'tko_account_parent_analytic',
-        'tko_account_moves_in_draft',
-        'tko_contract',
-        'account_cost_center',
-    ],
-    'data': [
-        'security/ir.model.access.csv',
-        'views/account_invoice_view.xml',
-        'views/account_expense_view.xml',
-        'views/ir_attachment_view.xml',
-        'views/account_analytic_view.xml',
-        'views/account_view.xml',
-        'views/account.xml',
-        'views/reconcile_button_view.xml',
-        'views/contract_view.xml',
-
-    ],
-    'init': [],
-    'demo': [],
-    'update': [],
-    'installable': True,
-    'application': False,
-    'auto_install': False,
-    'certificate': '',
-}
+import purchase
